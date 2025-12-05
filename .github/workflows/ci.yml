@@ -26,5 +26,6 @@ jobs:
 
       - name: Run Verification Script
         run: |
+          ls -la
           chmod +x verify.sh
           ./verify.sh
