@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Capture the project root directory (where the script is run from)
+PROJECT_ROOT=$(pwd)
+TOOL_PATH="$PROJECT_ROOT/semantic-release-notes"
+
 # Create a temporary directory for the test repo
 TEST_REPO=$(mktemp -d)
 echo "Creating test repo at $TEST_REPO"
@@ -90,8 +94,6 @@ git merge --no-ff chore/cleanup -m "chore: Remove legacy code [ISSUE-5]"
 git tag v1.2.0
 
 # --- Verification ---
-
-TOOL_PATH="/Users/jpollak/semantic-release-notes/semantic-release-notes"
 
 echo "---------------------------------------------------"
 echo "Test 1: v1.0.0 to v1.1.0 (Features, Fixes, Config)"
