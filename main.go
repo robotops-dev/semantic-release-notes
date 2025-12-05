@@ -62,7 +62,7 @@ func main() {
 		parsedCommits = append(parsedCommits, parser.ParseCommit(c))
 	}
 
-	notes := generator.Generate(parsedCommits)
+	notes := generator.Generate(parsedCommits, *fromTag, *toTag)
 	fmt.Println(notes)
 }
 

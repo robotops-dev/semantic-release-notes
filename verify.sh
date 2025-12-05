@@ -236,7 +236,13 @@ git tag v1.7.0
 # Run the tool: v1.6.0 to v1.7.0 (Testing first-parent)
 echo "---------------------------------------------------"
 echo "Running semantic-release-notes from v1.6.0 to v1.7.0 (Testing first-parent)..."
-/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.6.0 -to v1.7.0
+OUTPUT=$(/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.6.0 -to v1.7.0)
+echo "$OUTPUT"
+
+if [[ "$OUTPUT" != *"# Release Notes (v1.6.0...v1.7.0)"* ]]; then
+    echo "Error: Header format incorrect. Expected '# Release Notes (v1.6.0...v1.7.0)'"
+    exit 1
+fi
 
 # Clean up
 rm -rf "$TEST_REPO"

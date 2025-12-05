@@ -4,15 +4,20 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/jpollak/semantic-release-notes/parser"
 )
 
-func Generate(commits []parser.ParsedCommit) string {
+func Generate(commits []parser.ParsedCommit, from, to string) string {
 	var sb strings.Builder
 
-	sb.WriteString(fmt.Sprintf("# Release Notes (%s)\n\n", time.Now().Format("2006-01-02")))
+	header := "# Release Notes"
+	if from != "" && to != "" {
+		header += fmt.Sprintf(" (%s...%s)", from, to)
+	} else if to != "" {
+		header += fmt.Sprintf(" (%s)", to)
+	}
+	sb.WriteString(header + "\n\n")
 
 	// 1. Release Notes (Customer-Facing)
 	hasReleaseNotes := false
