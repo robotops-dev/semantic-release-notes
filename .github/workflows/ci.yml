@@ -33,3 +33,14 @@ jobs:
           git config --global init.defaultBranch main
           chmod +x verify.sh
           ./verify.sh
+
+  release:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run go-semantic-release
+        uses: go-semantic-release/action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
