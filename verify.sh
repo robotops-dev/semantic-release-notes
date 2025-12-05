@@ -5,6 +5,15 @@ set -e
 TEST_REPO=$(mktemp -d)
 echo "Creating test repo at $TEST_REPO"
 
+# Ensure cleanup happens on exit
+cleanup() {
+  if [ -d "$TEST_REPO" ]; then
+    echo "Cleaning up test repo..."
+    rm -rf "$TEST_REPO"
+  fi
+}
+trap cleanup EXIT
+
 cd "$TEST_REPO"
 git init
 git config user.email "you@example.com"
@@ -138,8 +147,6 @@ if [[ "$OUTPUT" != *"Update dashboard layout"* ]] || [[ "$OUTPUT" != *"Add suppo
     exit 1
 fi
 
-# Clean up
-rm -rf "$TEST_REPO"
 echo "---------------------------------------------------"
 echo "All tests passed!"
 
