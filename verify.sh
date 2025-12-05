@@ -16,6 +16,7 @@ trap cleanup EXIT
 
 cd "$TEST_REPO"
 git init
+git branch -m main
 git config user.email "you@example.com"
 git config user.name "Your Name"
 git config merge.log false
