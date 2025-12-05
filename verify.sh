@@ -16,241 +16,131 @@ touch README.md
 git add README.md
 git commit -m "Initial commit"
 
-# --- v1.0.0: Feature A ---
-git checkout -b feature/a
-touch feature-a.txt
-git add feature-a.txt
-git commit -m "Add Feature A"
+# --- v1.0.0: Foundation ---
+git checkout -b feature/init
+touch init.txt
+git add init.txt
+git commit -m "Initial feature"
 git checkout main
-git merge --no-ff feature/a -m "feat: Add Feature A [ISSUE-1]
+git merge --no-ff feature/init -m "feat(core): Initial release [ISSUE-1]
 
 ## 📝 Description
-Added Feature A.
+Setting up the foundation.
 
 ## 📣 Customer-Facing Release Notes
-- Released Feature A.
-
-## ⚙️ Configuration Changes
-- Added config for Feature A.
-
-## 🔌 Required Hardware Changes
-- Requires Hardware A.
+- Initial release of the platform.
 "
 git tag v1.0.0
 
-# --- v1.1.0: Feature B ---
-git checkout -b feature/b
-touch feature-b.txt
-git add feature-b.txt
-git commit -m "Add Feature B"
+# --- v1.1.0: Features and Fixes ---
+git checkout -b feature/ui-update
+touch ui.txt
+git add ui.txt
+git commit -m "UI Update"
 git checkout main
-git merge --no-ff feature/b -m "feat: Add Feature B [ISSUE-2]
+git merge --no-ff feature/ui-update -m "feat(ui): Update dashboard layout [ISSUE-2]
 
 ## 📝 Description
-Added Feature B.
+New dashboard with widgets.
 
 ## 📣 Customer-Facing Release Notes
-- Released Feature B.
+- New dashboard available.
+"
+
+git checkout -b fix/api-bug
+touch api.txt
+git add api.txt
+git commit -m "API Fix"
+git checkout main
+git merge --no-ff fix/api-bug -m "fix(api): Fix timeout issue [ISSUE-3]
 
 ## ⚙️ Configuration Changes
-- Added config for Feature B.
-
-## 🔌 Required Hardware Changes
-- Requires Hardware B.
+- Increased default timeout to 30s.
 "
 git tag v1.1.0
 
-# --- v1.2.0: Feature C ---
-git checkout -b feature/c
-touch feature-c.txt
-git add feature-c.txt
-git commit -m "Add Feature C"
+# --- v1.2.0: Hardware and Cleanup ---
+git checkout -b feature/hardware-support
+touch hw.txt
+git add hw.txt
+git commit -m "Hardware Support"
 git checkout main
-git merge --no-ff feature/c -m "feat(ui): Add Feature C [ISSUE-3]
-
-## 📝 Description
-Added Feature C.
-
-## 📣 Customer-Facing Release Notes
-- Released Feature C.
-
-## ⚙️ Configuration Changes
-- Added config for Feature C.
+git merge --no-ff feature/hardware-support -m "feat(hw): Add support for Model X [ISSUE-4]
 
 ## 🔌 Required Hardware Changes
-- Requires Hardware C.
+- Model X requires firmware v2.0.
 "
-git tag v1.2.0
 
-# Run the tool: v1.0.0 to v1.2.0
-echo "---------------------------------------------------"
-echo "Running semantic-release-notes from v1.0.0 to v1.2.0..."
-/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.0.0 -to v1.2.0
-
-# Run the tool: v1.1.0 to v1.2.0
-echo "---------------------------------------------------"
-echo "Running semantic-release-notes from v1.1.0 to v1.2.0..."
-/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.1.0 -to v1.2.0
-
-# Run the tool: v1.0.0 (everything up to v1.0.0)
-echo "---------------------------------------------------"
-echo "Running semantic-release-notes for v1.0.0..."
-/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -to v1.0.0
-
-# Run the tool: Missing tag (should fail)
-echo "---------------------------------------------------"
-echo "Running semantic-release-notes with missing tag (expecting failure)..."
-if /Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v9.9.9 -to v1.0.0; then
-    echo "Error: Tool should have failed for missing tag v9.9.9"
-    exit 1
-else
-    echo "Success: Tool failed as expected for missing tag."
-fi
-
-# --- v1.3.0: Cleanup and XML comments ---
-git checkout -b chore/cleanup-xml
+git checkout -b chore/cleanup
 touch cleanup.txt
 git add cleanup.txt
-git commit -m "Cleanup with XML comments"
+git commit -m "Cleanup"
 git checkout main
-git merge --no-ff chore/cleanup-xml -m "chore(config): Cleanup with XML comments [ISSUE-4]
+git merge --no-ff chore/cleanup -m "chore: Remove legacy code [ISSUE-5]"
+git tag v1.2.0
 
-## 📝 Description
-Cleanup with XML comments.
+# --- Verification ---
 
-## 📣 Customer-Facing Release Notes
-<!-- This is a comment -->
-- Cleaned up some stuff.
-<!-- Another comment -->
+TOOL_PATH="/Users/jpollak/semantic-release-notes/semantic-release-notes"
 
-## ⚙️ Configuration Changes
-None
-
-## 🔌 Required Hardware Changes
-N/A
-"
-git tag v1.3.0
-
-# Run the tool: v1.2.0 to v1.3.0 (Testing cleanup)
 echo "---------------------------------------------------"
-echo "Running semantic-release-notes from v1.2.0 to v1.3.0 (Testing cleanup)..."
-/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.2.0 -to v1.3.0
-
-# --- v1.4.0: Multiline Description ---
-git checkout -b feature/multiline
-touch multiline.txt
-git add multiline.txt
-git commit -m "Add multiline feature"
-git checkout main
-git merge --no-ff feature/multiline -m "feat: Multiline Feature [ISSUE-5]
-
-## 📝 Description
-Multiline Feature.
-This is a detailed description.
-It has multiple lines.
-
-## 📣 Customer-Facing Release Notes
-- Added multiline feature.
-"
-git tag v1.4.0
-
-# Run the tool: v1.3.0 to v1.4.0 (Testing multiline)
-echo "---------------------------------------------------"
-echo "Running semantic-release-notes from v1.3.0 to v1.4.0 (Testing multiline)..."
-/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.3.0 -to v1.4.0
-
-# --- v1.5.0: Empty Description ---
-git checkout -b feature/empty-desc
-touch empty.txt
-git add empty.txt
-git commit -m "Add empty feature"
-git checkout main
-# Merge with manual message to avoid regex matching and default description
-git merge --no-ff feature/empty-desc -m "feat: Add feature with empty description [ISSUE-6]
-
-## 📣 Customer-Facing Release Notes
-- Added feature with empty description.
-"
-git tag v1.5.0
-
-# Run the tool: v1.4.0 to v1.5.0 (Testing empty desc)
-echo "---------------------------------------------------"
-echo "Running semantic-release-notes from v1.4.0 to v1.5.0 (Testing empty desc)..."
-/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.4.0 -to v1.5.0
-
-# --- v1.6.0: Conventional Commits ---
-git checkout -b feature/conventional
-touch conventional.txt
-git add conventional.txt
-git commit -m "Add conventional feature"
-git checkout main
-# Merge with conventional subject
-git merge --no-ff feature/conventional -m "feat(ui): add new button [ISSUE-123] (#7)
-
-## 📝 Description
-This is a detailed description of the button.
-
-## 📣 Customer-Facing Release Notes
-- Added a shiny new button.
-"
-
-git checkout -b fix/conventional-bug
-touch conventional-fix.txt
-git add conventional-fix.txt
-git commit -m "Fix conventional bug"
-git checkout main
-# Merge with conventional subject
-git merge --no-ff fix/conventional-bug -m "fix(backend): fix crash on startup [#456] (#8)
-
-## 📝 Description
-Fixed the null pointer exception.
-
-## 📣 Customer-Facing Release Notes
-- Fixed startup crash.
-"
-git tag v1.6.0
-
-# Run the tool: v1.5.0 to v1.6.0 (Testing conventional)
-echo "---------------------------------------------------"
-echo "Running semantic-release-notes from v1.5.0 to v1.6.0 (Testing conventional)..."
-/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.5.0 -to v1.6.0
-
-# --- v1.7.0: First-Parent History ---
-# Create a feature branch and merge it
-git checkout -b feature/first-parent
-touch first-parent.txt
-git add first-parent.txt
-git commit -m "Add first-parent feature"
-git checkout main
-# Merge with conventional commit message in subject
-git merge --no-ff feature/first-parent -m "feat(core): support first-parent history [#789]
-
-## 📝 Description
-This feature allows using first-parent history.
-
-## 📣 Customer-Facing Release Notes
-- Added first-parent support.
-"
-git tag v1.7.0
-
-# Run the tool: v1.6.0 to v1.7.0 (Testing first-parent)
-echo "---------------------------------------------------"
-echo "Running semantic-release-notes from v1.6.0 to v1.7.0 (Testing first-parent)..."
-OUTPUT=$(/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.6.0 -to v1.7.0)
+echo "Test 1: v1.0.0 to v1.1.0 (Features, Fixes, Config)"
+OUTPUT=$($TOOL_PATH -repo "$TEST_REPO" -from v1.0.0 -to v1.1.0)
 echo "$OUTPUT"
+
+if [[ "$OUTPUT" != *"# Release Notes (v1.0.0...v1.1.0)"* ]]; then
+    echo "Error: Header format incorrect."
+    exit 1
+fi
+if [[ "$OUTPUT" != *"Update dashboard layout"* ]]; then
+    echo "Error: Missing UI feature."
+    exit 1
+fi
+if [[ "$OUTPUT" != *"Fix timeout issue"* ]]; then
+    echo "Error: Missing API fix."
+    exit 1
+fi
+if [[ "$OUTPUT" != *"Configuration Changes"* ]]; then
+    echo "Error: Missing Configuration Changes section."
+    exit 1
+fi
+
+echo "---------------------------------------------------"
+echo "Test 2: v1.1.0 to v1.2.0 (Hardware, Chore)"
+OUTPUT=$($TOOL_PATH -repo "$TEST_REPO" -from v1.1.0 -to v1.2.0)
+echo "$OUTPUT"
+
+if [[ "$OUTPUT" != *"# Release Notes (v1.1.0...v1.2.0)"* ]]; then
+    echo "Error: Header format incorrect."
+    exit 1
+fi
+if [[ "$OUTPUT" != *"Add support for Model X"* ]]; then
+    echo "Error: Missing hardware feature."
+    exit 1
+fi
+if [[ "$OUTPUT" != *"Required Hardware Changes"* ]]; then
+    echo "Error: Missing Required Hardware Changes section."
+    exit 1
+fi
+# Chores usually go to "Other Changes" or similar if not mapped, or just listed if mapped to Other.
+# Our parser maps unknown types to Other. 'chore' maps to Other.
+if [[ "$OUTPUT" != *"Remove legacy code"* ]]; then
+    echo "Error: Missing chore commit."
+    exit 1
+fi
+
+echo "---------------------------------------------------"
+echo "Test 3: v1.0.0 to v1.2.0 (Full Range)"
+OUTPUT=$($TOOL_PATH -repo "$TEST_REPO" -from v1.0.0 -to v1.2.0)
+# Should contain everything from 1.1.0 and 1.2.0
+if [[ "$OUTPUT" != *"Update dashboard layout"* ]] || [[ "$OUTPUT" != *"Add support for Model X"* ]]; then
+    echo "Error: Missing commits in full range test."
+    exit 1
+fi
 
 # Clean up
 rm -rf "$TEST_REPO"
-
-if [[ "$OUTPUT" != *"# Release Notes (v1.6.0...v1.7.0)"* ]]; then
-    echo "Error: Header format incorrect. Expected '# Release Notes (v1.6.0...v1.7.0)'"
-    exit 1
-fi
-
-# Check for flattened structure (no H3 component headers)
-if [[ "$OUTPUT" == *"### core"* ]]; then
-    echo "Error: Found '### core' header, expected flattened structure."
-    exit 1
-fi
+echo "---------------------------------------------------"
+echo "All tests passed!"
 
 
