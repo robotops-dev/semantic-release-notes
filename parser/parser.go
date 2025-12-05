@@ -24,14 +24,15 @@ type ParsedCommit struct {
 	CustomerFacingNotes     string
 	ConfigurationChanges    string
 	RequiredHardwareChanges string
+	Component               string
+	IssueNumber             string
 }
 
 var (
-	// Example: Merge pull request #123 from user/feature/awesome-thing
-	// We allow any type (feature, fix, chore, etc.)
-	mergePRRegex = regexp.MustCompile(`Merge pull request #(\d+) from .*/([^/]+)/(.+)`)
-	// Example: Merge branch 'feature/awesome-thing'
-	mergeBranchRegex = regexp.MustCompile(`Merge branch '([^/]+)/(.+)'`)
+	// Conventional commit regex: type(component): description [issue] (#pr)
+	// Component is optional. Issue is optional. PR is optional.
+	// We allow alphanumeric issues (e.g. SW-123).
+	conventionalRegex = regexp.MustCompile(`^([a-z]+)(?:\((.+)\))?: (.+?)(?: \[#?([a-zA-Z0-9-]+)\])?(?: \(#\d+\))?$`)
 )
 
 func ParseCommit(commit git.Commit) ParsedCommit {
@@ -40,24 +41,29 @@ func ParseCommit(commit git.Commit) ParsedCommit {
 		Original: commit,
 	}
 
-	// Try to match PR merge pattern
-	if matches := mergePRRegex.FindStringSubmatch(commit.Subject); len(matches) > 3 {
-		parsed.PRNumber = matches[1]
-		parsed.Type = mapType(matches[2])
-		parsed.Description = matches[3] // Default description from branch name
-	} else if matches := mergeBranchRegex.FindStringSubmatch(commit.Subject); len(matches) > 2 {
-		parsed.Type = mapType(matches[1])
-		parsed.Description = matches[2]
-	}
+	// Default description to subject
+	parsed.Description = commit.Subject
 
-	// Clean up description from branch name
-	parsed.Description = strings.ReplaceAll(parsed.Description, "-", " ")
-	parsed.Description = strings.Title(parsed.Description)
+	// Try to parse conventional commit from the subject
+	if matches := conventionalRegex.FindStringSubmatch(commit.Subject); len(matches) > 3 {
+		parsed.Type = mapType(matches[1])
+		parsed.Component = matches[2]
+		parsed.Description = matches[3]
+		if len(matches) > 4 {
+			parsed.IssueNumber = matches[4]
+		}
+	}
 
 	// Parse body for sections
-	if desc := extractSection(commit.Body, "## 📝 Description"); desc != "" {
-		parsed.Description = desc
+	bodyDesc := extractSection(commit.Body, "## 📝 Description")
+	if bodyDesc != "" {
+		// Append body description to the subject description
+		parsed.Description += "\n" + bodyDesc
 	}
+
+	// Clean up description (remove XML comments, etc.)
+	parsed.Description = cleanContent(parsed.Description)
+
 	parsed.CustomerFacingNotes = extractSection(commit.Body, "## 📣 Customer-Facing Release Notes")
 	parsed.ConfigurationChanges = extractSection(commit.Body, "## ⚙️ Configuration Changes")
 	parsed.RequiredHardwareChanges = extractSection(commit.Body, "## 🔌 Required Hardware Changes")

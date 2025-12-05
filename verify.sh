@@ -178,5 +178,65 @@ echo "---------------------------------------------------"
 echo "Running semantic-release-notes from v1.4.0 to v1.5.0 (Testing empty desc)..."
 /Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.4.0 -to v1.5.0
 
+# --- v1.6.0: Conventional Commits ---
+git checkout -b feature/conventional
+touch conventional.txt
+git add conventional.txt
+git commit -m "Add conventional feature"
+git checkout main
+# Merge with conventional subject
+git merge --no-ff feature/conventional -m "feat(ui): add new button [ISSUE-123] (#7)
+
+## 📝 Description
+This is a detailed description of the button.
+
+## 📣 Customer-Facing Release Notes
+- Added a shiny new button.
+"
+
+git checkout -b fix/conventional-bug
+touch conventional-fix.txt
+git add conventional-fix.txt
+git commit -m "Fix conventional bug"
+git checkout main
+# Merge with conventional subject
+git merge --no-ff fix/conventional-bug -m "fix(backend): fix crash on startup [#456] (#8)
+
+## 📝 Description
+Fixed the null pointer exception.
+
+## 📣 Customer-Facing Release Notes
+- Fixed startup crash.
+"
+git tag v1.6.0
+
+# Run the tool: v1.5.0 to v1.6.0 (Testing conventional)
+echo "---------------------------------------------------"
+echo "Running semantic-release-notes from v1.5.0 to v1.6.0 (Testing conventional)..."
+/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.5.0 -to v1.6.0
+
+# --- v1.7.0: First-Parent History ---
+# Create a feature branch and merge it
+git checkout -b feature/first-parent
+touch first-parent.txt
+git add first-parent.txt
+git commit -m "Add first-parent feature"
+git checkout main
+# Merge with conventional commit message in subject
+git merge --no-ff feature/first-parent -m "feat(core): support first-parent history [#789]
+
+## 📝 Description
+This feature allows using first-parent history.
+
+## 📣 Customer-Facing Release Notes
+- Added first-parent support.
+"
+git tag v1.7.0
+
+# Run the tool: v1.6.0 to v1.7.0 (Testing first-parent)
+echo "---------------------------------------------------"
+echo "Running semantic-release-notes from v1.6.0 to v1.7.0 (Testing first-parent)..."
+/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.6.0 -to v1.7.0
+
 # Clean up
 rm -rf "$TEST_REPO"

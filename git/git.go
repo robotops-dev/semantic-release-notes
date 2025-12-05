@@ -17,8 +17,12 @@ type Commit struct {
 // It uses the "git log --merges" command.
 func GetMergeCommits(repoPath, from, to string) ([]Commit, error) {
 	// Format: Hash%nSubject%nBody%n---COMMIT-END---%n
-	// We add a newline at the end to ensure clean separation.
-	args := []string{"log", "--merges", "--pretty=format:%H%n%s%n%b%n---COMMIT-END---%n"}
+	// Use --first-parent to follow the main branch history, avoiding intermediate commits from merged branches.
+	// We also remove --merges to include direct commits to main if any, though typically PRs are merges.
+	// Actually, the user asked to remove merge parsing support, implying we treat everything as a commit.
+	// But usually we still want to see the merge commits themselves if they contain the release notes.
+	// Let's stick to --first-parent.
+	args := []string{"log", "--first-parent", "--pretty=format:%H%n%s%n%b%n---COMMIT-END---%n"}
 	if from != "" || to != "" {
 		rangeSpec := ""
 		if from != "" && to != "" {
