@@ -22,7 +22,7 @@ touch feature-a.txt
 git add feature-a.txt
 git commit -m "Add Feature A"
 git checkout main
-git merge --no-ff feature/a -m "Merge pull request #1 from user/feature/a
+git merge --no-ff feature/a -m "feat: Add Feature A [ISSUE-1]
 
 ## 📝 Description
 Added Feature A.
@@ -44,7 +44,7 @@ touch feature-b.txt
 git add feature-b.txt
 git commit -m "Add Feature B"
 git checkout main
-git merge --no-ff feature/b -m "Merge pull request #2 from user/feature/b
+git merge --no-ff feature/b -m "feat: Add Feature B [ISSUE-2]
 
 ## 📝 Description
 Added Feature B.
@@ -66,7 +66,7 @@ touch feature-c.txt
 git add feature-c.txt
 git commit -m "Add Feature C"
 git checkout main
-git merge --no-ff feature/c -m "Merge pull request #3 from user/feature/c
+git merge --no-ff feature/c -m "feat(ui): Add Feature C [ISSUE-3]
 
 ## 📝 Description
 Added Feature C.
@@ -113,7 +113,7 @@ touch cleanup.txt
 git add cleanup.txt
 git commit -m "Cleanup with XML comments"
 git checkout main
-git merge --no-ff chore/cleanup-xml -m "Merge pull request #4 from user/chore/cleanup-xml
+git merge --no-ff chore/cleanup-xml -m "chore(config): Cleanup with XML comments [ISSUE-4]
 
 ## 📝 Description
 Cleanup with XML comments.
@@ -142,7 +142,7 @@ touch multiline.txt
 git add multiline.txt
 git commit -m "Add multiline feature"
 git checkout main
-git merge --no-ff feature/multiline -m "Merge pull request #5 from user/feature/multiline
+git merge --no-ff feature/multiline -m "feat: Multiline Feature [ISSUE-5]
 
 ## 📝 Description
 Multiline Feature.
@@ -166,7 +166,7 @@ git add empty.txt
 git commit -m "Add empty feature"
 git checkout main
 # Merge with manual message to avoid regex matching and default description
-git merge --no-ff feature/empty-desc -m "Manual merge of feature/empty-desc
+git merge --no-ff feature/empty-desc -m "feat: Add feature with empty description [ISSUE-6]
 
 ## 📣 Customer-Facing Release Notes
 - Added feature with empty description.
@@ -239,6 +239,9 @@ echo "Running semantic-release-notes from v1.6.0 to v1.7.0 (Testing first-parent
 OUTPUT=$(/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.6.0 -to v1.7.0)
 echo "$OUTPUT"
 
+# Clean up
+rm -rf "$TEST_REPO"
+
 if [[ "$OUTPUT" != *"# Release Notes (v1.6.0...v1.7.0)"* ]]; then
     echo "Error: Header format incorrect. Expected '# Release Notes (v1.6.0...v1.7.0)'"
     exit 1
@@ -250,5 +253,4 @@ if [[ "$OUTPUT" == *"### core"* ]]; then
     exit 1
 fi
 
-# Clean up
-rm -rf "$TEST_REPO"
+
