@@ -55,15 +55,6 @@ func ParseCommit(commit git.Commit) ParsedCommit {
 	}
 
 	// Parse body for sections
-	bodyDesc := extractSection(commit.Body, "## 📝 Description")
-	if bodyDesc != "" {
-		// Append body description to the subject description
-		parsed.Description += "\n" + bodyDesc
-	}
-
-	// Clean up description (remove XML comments, etc.)
-	parsed.Description = cleanContent(parsed.Description)
-
 	parsed.CustomerFacingNotes = extractSection(commit.Body, "## 📣 Customer-Facing Release Notes")
 	parsed.ConfigurationChanges = extractSection(commit.Body, "## ⚙️ Configuration Changes")
 	parsed.RequiredHardwareChanges = extractSection(commit.Body, "## 🔌 Required Hardware Changes")
@@ -98,7 +89,7 @@ func cleanContent(content string) string {
 
 	// Check for "None" or "N/A" (case-insensitive)
 	lower := strings.ToLower(content)
-	if lower == "none" || lower == "n/a" || lower == "" {
+	if strings.HasPrefix(lower, "none") || strings.HasPrefix(lower, "n/a") || lower == "" {
 		return ""
 	}
 

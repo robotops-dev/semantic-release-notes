@@ -40,10 +40,10 @@ Be sure to enable the new model in the config.
 	if parsed.IssueNumber != "SW-1928" {
 		t.Errorf("Expected IssueNumber to be 'SW-1928', got '%s'", parsed.IssueNumber)
 	}
-	// The description should include the subject description and the body description
-	expectedDescStart := "Support Next Generation Model"
-	if len(parsed.Description) < len(expectedDescStart) || parsed.Description[:len(expectedDescStart)] != expectedDescStart {
-		t.Errorf("Expected Description to start with '%s', got '%s'", expectedDescStart, parsed.Description)
+	// The description should match the subject description exactly, as we no longer append the body
+	expectedDesc := "Support Next Generation Model"
+	if parsed.Description != expectedDesc {
+		t.Errorf("Expected Description to be '%s', got '%s'", expectedDesc, parsed.Description)
 	}
 
 	expectedCustomerNotes := "We have added support for Next Generation Model via config changes."
@@ -58,5 +58,34 @@ Be sure to enable the new model in the config.
 
 	if parsed.RequiredHardwareChanges != "" {
 		t.Errorf("Expected RequiredHardwareChanges to be empty, got '%s'", parsed.RequiredHardwareChanges)
+	}
+}
+
+func TestCleanContent(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"Valid content", "Valid content"},
+		{"  Valid content with spaces  ", "Valid content with spaces"},
+		{"None", ""},
+		{"none", ""},
+		{"N/A", ""},
+		{"n/a", ""},
+		{"None required", ""},
+		{"N/A - not applicable", ""},
+		{"none.", ""},
+		{"<!-- comment --> Real content", "Real content"},
+		{"<!-- comment --> None", ""},
+		{"", ""},
+		{"   ", ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			if got := cleanContent(tt.input); got != tt.expected {
+				t.Errorf("cleanContent(%q) = %q, want %q", tt.input, got, tt.expected)
+			}
+		})
 	}
 }

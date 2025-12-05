@@ -19,45 +19,7 @@ func Generate(commits []parser.ParsedCommit, from, to string) string {
 	}
 	sb.WriteString(header + "\n\n")
 
-	// 1. Release Notes (Customer-Facing)
-	hasReleaseNotes := false
-	for _, c := range commits {
-		if c.CustomerFacingNotes != "" {
-			sb.WriteString(c.CustomerFacingNotes + "\n\n")
-			hasReleaseNotes = true
-		}
-	}
-	if !hasReleaseNotes {
-		sb.WriteString("No release notes provided.\n\n")
-	}
-
-	// 2. Configuration Changes
-	sb.WriteString("## Configuration Changes\n\n")
-	hasConfigChanges := false
-	for _, c := range commits {
-		if c.ConfigurationChanges != "" {
-			sb.WriteString(c.ConfigurationChanges + "\n\n")
-			hasConfigChanges = true
-		}
-	}
-	if !hasConfigChanges {
-		sb.WriteString("No configuration changes.\n\n")
-	}
-
-	// 3. Required Hardware Changes
-	sb.WriteString("## Required Hardware Changes\n\n")
-	hasHardwareChanges := false
-	for _, c := range commits {
-		if c.RequiredHardwareChanges != "" {
-			sb.WriteString(c.RequiredHardwareChanges + "\n\n")
-			hasHardwareChanges = true
-		}
-	}
-	if !hasHardwareChanges {
-		sb.WriteString("No required hardware changes.\n\n")
-	}
-
-	// 4. Grouped Commits
+	// Group Commits
 	features := []parser.ParsedCommit{}
 	fixes := []parser.ParsedCommit{}
 	others := []parser.ParsedCommit{}
@@ -76,17 +38,47 @@ func Generate(commits []parser.ParsedCommit, from, to string) string {
 	if len(features) > 0 {
 		sb.WriteString("## Features\n\n")
 		sb.WriteString(formatGroupedCommits(features))
+		sb.WriteString("\n")
 	}
 
 	if len(fixes) > 0 {
 		sb.WriteString("## Bug Fixes\n\n")
 		sb.WriteString(formatGroupedCommits(fixes))
+		sb.WriteString("\n")
 	}
 
 	if len(others) > 0 {
 		sb.WriteString("## Other Changes\n\n")
 		sb.WriteString(formatGroupedCommits(others))
+		sb.WriteString("\n")
 	}
+
+	// 2. Configuration Changes
+	sb.WriteString("## Configuration Changes\n\n")
+	hasConfigChanges := false
+	for _, c := range commits {
+		if c.ConfigurationChanges != "" {
+			sb.WriteString("### " + c.Description + "\n\n")
+			sb.WriteString(c.ConfigurationChanges + "\n\n")
+			hasConfigChanges = true
+		}
+	}
+	if !hasConfigChanges {
+		sb.WriteString("No configuration changes.\n\n")
+	}
+
+	// // 3. Required Hardware Changes
+	// sb.WriteString("## Required Hardware Changes\n\n")
+	// hasHardwareChanges := false
+	// for _, c := range commits {
+	// 	if c.RequiredHardwareChanges != "" {
+	// 		sb.WriteString(c.RequiredHardwareChanges + "\n\n")
+	// 		hasHardwareChanges = true
+	// 	}
+	// }
+	// if !hasHardwareChanges {
+	// 	sb.WriteString("No required hardware changes.\n\n")
+	// }
 
 	return sb.String()
 }
@@ -94,39 +86,16 @@ func Generate(commits []parser.ParsedCommit, from, to string) string {
 func formatGroupedCommits(commits []parser.ParsedCommit) string {
 	var sb strings.Builder
 
-	// Group by component
-	byComponent := make(map[string][]parser.ParsedCommit)
-	var noComponent []parser.ParsedCommit
+	// Sort commits by component, then description
+	sort.Slice(commits, func(i, j int) bool {
+		if commits[i].Component != commits[j].Component {
+			return commits[i].Component < commits[j].Component
+		}
+		return commits[i].Description < commits[j].Description
+	})
 
 	for _, c := range commits {
-		if c.Component != "" {
-			byComponent[c.Component] = append(byComponent[c.Component], c)
-		} else {
-			noComponent = append(noComponent, c)
-		}
-	}
-
-	// Sort components for deterministic output
-	var components []string
-	for k := range byComponent {
-		components = append(components, k)
-	}
-	sort.Strings(components)
-
-	for _, comp := range components {
-		sb.WriteString(fmt.Sprintf("### %s\n\n", comp))
-		for _, c := range byComponent[comp] {
-			sb.WriteString(formatCommit(c))
-		}
-	}
-
-	if len(noComponent) > 0 {
-		if len(components) > 0 {
-			sb.WriteString("### General\n\n")
-		}
-		for _, c := range noComponent {
-			sb.WriteString(formatCommit(c))
-		}
+		sb.WriteString(formatCommit(c))
 	}
 
 	return sb.String()
@@ -144,8 +113,8 @@ func formatCommit(c parser.ParsedCommit) string {
 	}
 
 	var sb strings.Builder
-	// Use bold for header instead of H3 since we are inside H2/H3 sections
-	sb.WriteString(fmt.Sprintf("**%s**", header))
+	// Bullet point per change
+	sb.WriteString(fmt.Sprintf("* %s", header))
 
 	if c.IssueNumber != "" {
 		sb.WriteString(fmt.Sprintf(" [%s]", c.IssueNumber))
@@ -158,9 +127,10 @@ func formatCommit(c parser.ParsedCommit) string {
 		}
 		sb.WriteString(fmt.Sprintf(" (%s)", hash))
 	}
-	sb.WriteString("\n\n")
+	sb.WriteString("\n")
 	if body != "" {
-		sb.WriteString(strings.TrimSpace(body) + "\n\n")
+		sb.WriteString(strings.TrimSpace(body) + "\n")
 	}
+
 	return sb.String()
 }

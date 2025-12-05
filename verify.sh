@@ -244,5 +244,11 @@ if [[ "$OUTPUT" != *"# Release Notes (v1.6.0...v1.7.0)"* ]]; then
     exit 1
 fi
 
+# Check for flattened structure (no H3 component headers)
+if [[ "$OUTPUT" == *"### core"* ]]; then
+    echo "Error: Found '### core' header, expected flattened structure."
+    exit 1
+fi
+
 # Clean up
 rm -rf "$TEST_REPO"
