@@ -61,6 +61,9 @@ func Generate(commits []parser.ParsedCommit) string {
 }
 
 func formatCommit(c parser.ParsedCommit) string {
+	if c.Description == "" {
+		return ""
+	}
 	lines := strings.Split(c.Description, "\n")
 	header := lines[0]
 	body := ""
@@ -70,8 +73,12 @@ func formatCommit(c parser.ParsedCommit) string {
 
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("### %s", header))
-	if c.PRNumber != "" {
-		sb.WriteString(fmt.Sprintf(" (#%s)", c.PRNumber))
+	if c.Original.Hash != "" {
+		hash := c.Original.Hash
+		if len(hash) > 8 {
+			hash = hash[:8]
+		}
+		sb.WriteString(fmt.Sprintf(" (#%s)", hash))
 	}
 	sb.WriteString("\n\n")
 	if body != "" {

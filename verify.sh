@@ -159,5 +159,24 @@ echo "---------------------------------------------------"
 echo "Running semantic-release-notes from v1.3.0 to v1.4.0 (Testing multiline)..."
 /Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.3.0 -to v1.4.0
 
+# --- v1.5.0: Empty Description ---
+git checkout -b feature/empty-desc
+touch empty.txt
+git add empty.txt
+git commit -m "Add empty feature"
+git checkout main
+# Merge with manual message to avoid regex matching and default description
+git merge --no-ff feature/empty-desc -m "Manual merge of feature/empty-desc
+
+## 📣 Customer-Facing Release Notes
+- Added feature with empty description.
+"
+git tag v1.5.0
+
+# Run the tool: v1.4.0 to v1.5.0 (Testing empty desc)
+echo "---------------------------------------------------"
+echo "Running semantic-release-notes from v1.4.0 to v1.5.0 (Testing empty desc)..."
+/Users/jpollak/semantic-release-notes/semantic-release-notes -repo "$TEST_REPO" -from v1.4.0 -to v1.5.0
+
 # Clean up
 rm -rf "$TEST_REPO"
