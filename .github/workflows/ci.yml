@@ -19,7 +19,9 @@ jobs:
           go-version: "1.21"
 
       - name: Build
-        run: go build -v ./...
+        run: |
+          go build -v ./...
+          go build -v -o semantic-release-notes
 
       - name: Test
         run: go test -v ./...
@@ -27,5 +29,7 @@ jobs:
       - name: Run Verification Script
         run: |
           ls -la
+          git config set advice.defaultBranchName false
+          git config --global init.defaultBranch main
           chmod +x verify.sh
           ./verify.sh
