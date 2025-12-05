@@ -67,18 +67,19 @@ func Generate(commits []parser.ParsedCommit, from, to string) string {
 		sb.WriteString("No configuration changes.\n\n")
 	}
 
-	// // 3. Required Hardware Changes
-	// sb.WriteString("## Required Hardware Changes\n\n")
-	// hasHardwareChanges := false
-	// for _, c := range commits {
-	// 	if c.RequiredHardwareChanges != "" {
-	// 		sb.WriteString(c.RequiredHardwareChanges + "\n\n")
-	// 		hasHardwareChanges = true
-	// 	}
-	// }
-	// if !hasHardwareChanges {
-	// 	sb.WriteString("No required hardware changes.\n\n")
-	// }
+	// 3. Required Hardware Changes
+	sb.WriteString("## Required Hardware Changes\n\n")
+	hasHardwareChanges := false
+	for _, c := range commits {
+		if c.RequiredHardwareChanges != "" {
+			sb.WriteString("### " + c.Description + "\n\n")
+			sb.WriteString(c.RequiredHardwareChanges + "\n\n")
+			hasHardwareChanges = true
+		}
+	}
+	if !hasHardwareChanges {
+		sb.WriteString("No required hardware changes.\n\n")
+	}
 
 	return sb.String()
 }
