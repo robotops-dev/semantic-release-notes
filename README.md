@@ -18,6 +18,8 @@ commits.
   - `## 📣 Customer-Facing Release Notes`
   - `## ⚙️ Configuration Changes`
   - `## 🔌 Required Hardware Changes`
+  - See the [pull request template](.github/pull_request_template.md) for an
+    example of how to structure your commit messages.
 - **Content Cleaning**: Automatically filters out XML comments and "None"/"N/A"
   placeholders.
 - **Version Range Header**: Generates a header with the version range (e.g.,
