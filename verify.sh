@@ -117,6 +117,16 @@ if [[ "$OUTPUT" != *"Configuration Changes"* ]]; then
     exit 1
 fi
 
+# Ensure v1.0.0 notes are NOT present
+if [[ "$OUTPUT" == *"Initial release of the platform"* ]]; then
+    echo "Error: Output contains v1.0.0 release notes (customer facing)."
+    exit 1
+fi
+if [[ "$OUTPUT" == *"Setting up the foundation"* ]]; then
+    echo "Error: Output contains v1.0.0 description."
+    exit 1
+fi
+
 echo "---------------------------------------------------"
 echo "Test 2: v1.1.0 to v1.2.0 (Hardware, Chore)"
 OUTPUT=$($TOOL_PATH -repo "$TEST_REPO" -from v1.1.0 -to v1.2.0)

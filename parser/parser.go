@@ -48,6 +48,9 @@ func ParseCommit(commit git.Commit) ParsedCommit {
 	if matches := conventionalRegex.FindStringSubmatch(commit.Subject); len(matches) > 3 {
 		parsed.Type = mapType(matches[1])
 		parsed.Component = matches[2]
+		if len(parsed.Component) == 0 {
+			parsed.Component = "other"
+		}
 		parsed.Description = matches[3]
 		if len(matches) > 4 {
 			parsed.IssueNumber = matches[4]

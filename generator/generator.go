@@ -36,19 +36,19 @@ func Generate(commits []parser.ParsedCommit, from, to string) string {
 	}
 
 	if len(features) > 0 {
-		sb.WriteString("## Features\n\n")
+		sb.WriteString("## Features\n")
 		sb.WriteString(formatGroupedCommits(features))
 		sb.WriteString("\n")
 	}
 
 	if len(fixes) > 0 {
-		sb.WriteString("## Bug Fixes\n\n")
+		sb.WriteString("## Bug Fixes\n")
 		sb.WriteString(formatGroupedCommits(fixes))
 		sb.WriteString("\n")
 	}
 
 	if len(others) > 0 {
-		sb.WriteString("## Other Changes\n\n")
+		sb.WriteString("## Other Changes\n")
 		sb.WriteString(formatGroupedCommits(others))
 		sb.WriteString("\n")
 	}
@@ -90,12 +90,24 @@ func formatGroupedCommits(commits []parser.ParsedCommit) string {
 	// Sort commits by component, then description
 	sort.Slice(commits, func(i, j int) bool {
 		if commits[i].Component != commits[j].Component {
+			if commits[i].Component == "other" {
+				return false
+			}
+			if commits[j].Component == "other" {
+				return true
+			}
 			return commits[i].Component < commits[j].Component
 		}
 		return commits[i].Description < commits[j].Description
 	})
 
+	currentComponent := ""
 	for _, c := range commits {
+		if c.Component != currentComponent {
+			currentComponent = c.Component
+			r := []rune(currentComponent)
+			sb.WriteString("\n### " + strings.ToUpper(string(r[0])) + string(r[1:]) + "\n\n")
+		}
 		sb.WriteString(formatCommit(c))
 	}
 
